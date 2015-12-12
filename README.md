@@ -21,6 +21,7 @@
 [Win32下载](http://down.winmama.com/numbeMagic.exe)
 [Win64下载](http://down.winmama.com/numbeMagic64.exe)
 [Linux64下载](http://down.winmama.com/numberMagic)
+
 其它平台用可以自行编译. 
 
 截图:
