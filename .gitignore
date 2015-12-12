@@ -1,0 +1,11 @@
+*~
+main
+numberMagic
+*.exe
+*swap
+*.o
+*.so
+*.a
+bin
+*swp
+
