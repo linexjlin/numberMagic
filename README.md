@@ -17,9 +17,11 @@
 从任意文本文件里提取手机号, 然后按运营商分成多个文件.
 
 ## 可执行文件下载:
+因为打包了 30 万号段的关系单个文件比较大 15M 左右. 
 [Win32下载](http://donw.winmama.com/numbeMagic.exe)
 [Win64下载](http://donw.winmama.com/numbeMagic64.exe)
 [Linux64下载](http://donw.winmama.com/numberMagic)
+其它平台用可以自行编译. 
 
 截图:
 ![](http://7xipka.com1.z0.glb.clouddn.com/nm2.jpg)
