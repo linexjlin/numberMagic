@@ -15,3 +15,12 @@
 
 1. 提取手机号并区分运营商
 从任意文本文件里提取手机号, 然后按运营商分成多个文件.
+
+## 可执行文件下载:
+[Win32下载](http://donw.winmama.com/numbeMagic.exe)
+[Win64下载](http://donw.winmama.com/numbeMagic64.exe)
+[Linux64下载](http://donw.winmama.com/numberMagic)
+
+截图:
+![](http://7xipka.com1.z0.glb.clouddn.com/nm2.jpg)
+![](http://7xipka.com1.z0.glb.clouddn.com/nm01.png)
