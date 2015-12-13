@@ -70,11 +70,32 @@ func SaveStrToFile(strData string, fileName string) {
 	defer f.Close()
 }
 
+func SaveDistinctStrToFile(strData string, fileName string) {
+	if len(strData) == 0 {
+		return
+	}
+	checkCreateFile(fileName)
+	strMap := make(map[string]bool)
+	for _, str := range strings.Split(strData, "\n") {
+		strMap[str] = true
+	}
+
+	f, err := os.OpenFile(fileName, os.O_APPEND|os.O_WRONLY, 0600)
+	if err != nil {
+		panic(err)
+	}
+	defer f.Close()
+	for str, _ := range strMap {
+		f.WriteString(str)
+	}
+
+}
+
 func splitToFileByMaxLines(strData string, MaxLines int, name string) {
 	lines := strings.Split(strData, "\n")
 	for i := 0; i < len(lines)/MaxLines+1; i++ {
 		fileName := name + fmt.Sprintf("%06d", i+1) + ".txt"
-		os.Remove(fileName)
+		//os.Remove(fileName)
 		checkCreateFile(fileName)
 		upper := i*MaxLines + MaxLines
 		if upper > len(lines) {
@@ -155,6 +176,7 @@ func ShowChoiceMessage() {
 	fmt.Println("3: 分割文件")
 	fmt.Println("4: 提取手机号并区分归属地")
 	fmt.Println("5: 提取手机号并区分运营商")
+	fmt.Println("6: 号码去重")
 	fmt.Printf("\n我需要: ")
 }
 
@@ -193,6 +215,9 @@ func main() {
 	case "5":
 		dataStr = ReadAllStr(os.Args[1:])
 		splitToFileByISP(dataStr, "")
+	case "6":
+		dataStr = ReadAllStr(os.Args[1:])
+		SaveDistinctStrToFile(dataStr, "去重.txt")
 	}
 
 	fmt.Println("处理完成! 请按任意键退出.")
