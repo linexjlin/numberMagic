@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 	"regexp"
 	"strings"
 )
@@ -181,6 +182,14 @@ func ShowChoiceMessage() {
 }
 
 func main() {
+	dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	fmt.Println(dir)
+	os.Chdir(dir)
+
 	dataStr := ""
 	if len(os.Args) == 1 {
 		fmt.Println("请将要处理的文件选中,拖到本程序的图标上.")
