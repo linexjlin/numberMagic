@@ -20,12 +20,7 @@
 手机号去重
 
 ## 可执行文件下载:
-因为打包了 30 万号段的关系单个文件比较大 15M 左右. 
-[Win32下载](http://down.winmama.com/numberMagic32.exe)
-[Win64下载](http://down.winmama.com/numberMagic.exe)
-[Linux64下载](http://down.winmama.com/numberMagic)
-
-其它平台用可以自行编译. 
+[从 gobuild.io 下载](https://gobuild.io/linexjlin/numbermagic/master)
 
 截图:
 ![](http://7xipka.com1.z0.glb.clouddn.com/nm2.jpg)
