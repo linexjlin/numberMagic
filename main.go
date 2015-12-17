@@ -239,7 +239,7 @@ func main() {
 		splitToFileByMobileLocation(&dataStr, "")
 	case "5":
 		dataStr = ReadAllStr(os.Args[1:])
-		splitToFileByISP(&dataStr, "")
+		splitToFileByISP(&dataStr, fileName+"_")
 	case "6":
 		dataStr = ReadAllStr(os.Args[1:])
 		SaveDistinctStrToFile(&dataStr, fileName+"(去重).txt")
