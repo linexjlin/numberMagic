@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"strconv"
 	"strings"
 )
 
@@ -29,13 +30,13 @@ func ReadAllStr(fnames []string) (dataStr string) {
 	return dataStr
 }
 
-func FindMobiles(source string) []string {
+func FindMobiles(source *string) []string {
 	r, e := regexp.Compile(mobileExp)
 	if e != nil {
 		fmt.Println(e, r)
 		return nil
 	}
-	return r.FindAllString(source, -1)
+	return r.FindAllString(*source, -1)
 }
 
 func checkCreateFile(fileName string) {
@@ -58,8 +59,8 @@ func SaveSliceToFile(Slice []string, fileName string) {
 	defer f.Close()
 }
 
-func SaveStrToFile(strData string, fileName string) {
-	if len(strData) == 0 {
+func SaveStrToFile(strData *string, fileName string) {
+	if len(*strData) == 0 {
 		return
 	}
 	checkCreateFile(fileName)
@@ -67,17 +68,17 @@ func SaveStrToFile(strData string, fileName string) {
 	if err != nil {
 		panic(err)
 	}
-	f.WriteString(strData)
+	f.WriteString(*strData)
 	defer f.Close()
 }
 
-func SaveDistinctStrToFile(strData string, fileName string) {
-	if len(strData) == 0 {
+func SaveDistinctStrToFile(strData *string, fileName string) {
+	if len(*strData) == 0 {
 		return
 	}
 	checkCreateFile(fileName)
 	strMap := make(map[string]bool)
-	for _, str := range strings.Split(strData, "\n") {
+	for _, str := range strings.Split(*strData, "\n") {
 		strMap[str] = true
 	}
 
@@ -92,8 +93,8 @@ func SaveDistinctStrToFile(strData string, fileName string) {
 
 }
 
-func splitToFileByMaxLines(strData string, MaxLines int, name string) {
-	lines := strings.Split(strData, "\n")
+func splitToFileByMaxLines(strData *string, MaxLines int, name string) {
+	lines := strings.Split(*strData, "\n")
 	for i := 0; i < len(lines)/MaxLines+1; i++ {
 		fileName := name + fmt.Sprintf("%06d", i+1) + ".txt"
 		//os.Remove(fileName)
@@ -106,7 +107,7 @@ func splitToFileByMaxLines(strData string, MaxLines int, name string) {
 	}
 }
 
-func splitToFileByMobileLocation(strData string, name string) {
+func splitToFileByMobileLocation(strData *string, name string) {
 	mobiles := FindMobiles(strData)
 
 	if len(mobiles) == 0 {
@@ -145,7 +146,7 @@ func cardToISP(card string) (ISP string) {
 
 }
 
-func splitToFileByISP(strData string, name string) {
+func splitToFileByISP(strData *string, name string) {
 	mobiles := FindMobiles(strData)
 
 	if len(mobiles) == 0 {
@@ -181,15 +182,29 @@ func ShowChoiceMessage() {
 	fmt.Printf("\n我需要: ")
 }
 
+func GetFileName() string {
+	fileName := ""
+	for i := 1; i < len(os.Args); i++ {
+		if fileName == "" {
+			fileName = strings.TrimSuffix(filepath.Base(os.Args[i]), ".txt")
+		} else {
+			fileName = fileName + "+" + strings.TrimSuffix(filepath.Base(os.Args[i]), ".txt")
+		}
+
+	}
+	return fileName
+}
+
 func main() {
 	dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
+
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
 	fmt.Println(dir)
 	os.Chdir(dir)
-
+	fileName := GetFileName()
 	dataStr := ""
 	if len(os.Args) == 1 {
 		fmt.Println("请将要处理的文件选中,拖到本程序的图标上.")
@@ -203,11 +218,12 @@ func main() {
 	switch c {
 	case "1":
 		dataStr = ReadAllStr(os.Args[1:])
-		mobiles := FindMobiles(dataStr)
-		SaveSliceToFile(mobiles, "手机号.txt")
+		mobiles := FindMobiles(&dataStr)
+		cnt := len(mobiles)
+		SaveSliceToFile(mobiles, fileName+"(手机号"+strconv.Itoa(cnt)+"个).txt")
 	case "2":
 		dataStr = ReadAllStr(os.Args[1:])
-		SaveStrToFile(dataStr, "合并.txt")
+		SaveStrToFile(&dataStr, fileName+"(合并).txt")
 	case "3":
 		dataStr = ReadAllStr(os.Args[1:])
 		maxLines := 0
@@ -217,16 +233,16 @@ func main() {
 			fmt.Println(e)
 			os.Exit(2)
 		}
-		splitToFileByMaxLines(dataStr, maxLines, "子文件")
+		splitToFileByMaxLines(&dataStr, maxLines, fileName+"_子文件")
 	case "4":
 		dataStr = ReadAllStr(os.Args[1:])
-		splitToFileByMobileLocation(dataStr, "")
+		splitToFileByMobileLocation(&dataStr, "")
 	case "5":
 		dataStr = ReadAllStr(os.Args[1:])
-		splitToFileByISP(dataStr, "")
+		splitToFileByISP(&dataStr, "")
 	case "6":
 		dataStr = ReadAllStr(os.Args[1:])
-		SaveDistinctStrToFile(dataStr, "去重.txt")
+		SaveDistinctStrToFile(&dataStr, fileName+"(去重).txt")
 	}
 
 	fmt.Println("处理完成! 请按任意键退出.")
