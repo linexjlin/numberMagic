@@ -15,7 +15,7 @@ const phoneExp = `(010[2-9]\d{6,7})|(02[0-9][2-9]\d{6,7})|(0[3-9]\d{9,10})`
 const mobileExp = `(1[3-8]\d{9})`
 const phoneAndMobileExp = mobileExp + `|` + phoneExp
 
-func ReadAllStr(fnames []string) (dataStr string) {
+func ReadAllStr(fnames []string, dataStr *string) {
 	for _, f := range fnames {
 		f, e := os.Open(f)
 		if e != nil {
@@ -24,10 +24,10 @@ func ReadAllStr(fnames []string) (dataStr string) {
 		if fdata, err := ioutil.ReadAll(f); err != nil {
 			fmt.Println(e, f.Name())
 		} else {
-			dataStr = dataStr + string(fdata)
+			*dataStr = *dataStr + string(fdata)
 		}
 	}
-	return dataStr
+	return
 }
 
 func FindMobiles(source *string) []string {
@@ -46,8 +46,8 @@ func checkCreateFile(fileName string) {
 	}
 }
 
-func SaveSliceToFile(Slice []string, fileName string) {
-	if len(Slice) == 0 {
+func SaveSliceToFile(Slice *[]string, fileName string) {
+	if len(*Slice) == 0 {
 		return
 	}
 	checkCreateFile(fileName)
@@ -55,7 +55,7 @@ func SaveSliceToFile(Slice []string, fileName string) {
 	if err != nil {
 		panic(err)
 	}
-	f.WriteString(strings.Join(Slice, "\n"))
+	f.WriteString(strings.Join(*Slice, "\n"))
 	defer f.Close()
 }
 
@@ -103,7 +103,8 @@ func splitToFileByMaxLines(strData *string, MaxLines int, name string) {
 		if upper > len(lines) {
 			upper = len(lines)
 		}
-		SaveSliceToFile(lines[i*MaxLines:upper], fileName)
+		slice := lines[i*MaxLines : upper]
+		SaveSliceToFile(&slice, fileName)
 	}
 }
 
@@ -127,7 +128,7 @@ func splitToFileByMobileLocation(strData *string, name string) {
 	}
 
 	for l, m := range locNums {
-		SaveSliceToFile(m, l+fmt.Sprintf("(%d个)", len(m))+".txt")
+		SaveSliceToFile(&m, l+fmt.Sprintf("(%d个)", len(m))+".txt")
 	}
 }
 
@@ -163,7 +164,7 @@ func splitToFileByISP(strData *string, name string) {
 	}
 
 	for p, m := range ispNums {
-		SaveSliceToFile(m, p+fmt.Sprintf("(%d个)", len(m))+".txt")
+		SaveSliceToFile(&m, p+fmt.Sprintf("(%d个)", len(m))+".txt")
 	}
 }
 
@@ -217,15 +218,15 @@ func main() {
 
 	switch c {
 	case "1":
-		dataStr = ReadAllStr(os.Args[1:])
+		ReadAllStr(os.Args[1:], &dataStr)
 		mobiles := FindMobiles(&dataStr)
 		cnt := len(mobiles)
-		SaveSliceToFile(mobiles, fileName+"(手机号"+strconv.Itoa(cnt)+"个).txt")
+		SaveSliceToFile(&mobiles, fileName+"(手机号"+strconv.Itoa(cnt)+"个).txt")
 	case "2":
-		dataStr = ReadAllStr(os.Args[1:])
+		ReadAllStr(os.Args[1:], &dataStr)
 		SaveStrToFile(&dataStr, fileName+"(合并).txt")
 	case "3":
-		dataStr = ReadAllStr(os.Args[1:])
+		ReadAllStr(os.Args[1:], &dataStr)
 		maxLines := 0
 		fmt.Printf("\n请输入单文件最大行数: ")
 		_, e := fmt.Scanf("%d", &maxLines)
@@ -235,13 +236,13 @@ func main() {
 		}
 		splitToFileByMaxLines(&dataStr, maxLines, fileName+"_子文件")
 	case "4":
-		dataStr = ReadAllStr(os.Args[1:])
+		ReadAllStr(os.Args[1:], &dataStr)
 		splitToFileByMobileLocation(&dataStr, "")
 	case "5":
-		dataStr = ReadAllStr(os.Args[1:])
+		ReadAllStr(os.Args[1:], &dataStr)
 		splitToFileByISP(&dataStr, fileName+"_")
 	case "6":
-		dataStr = ReadAllStr(os.Args[1:])
+		ReadAllStr(os.Args[1:], &dataStr)
 		SaveDistinctStrToFile(&dataStr, fileName+"(去重).txt")
 	}
 
